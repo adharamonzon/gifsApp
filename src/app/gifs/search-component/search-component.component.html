@@ -1,0 +1,11 @@
+<h5>Buscar:</h5>
+<input type="text"
+  class="from-control"
+  placeholder="Buscar gifs..."
+  (keyup.enter)="searchGif()"
+  #txtSearch
+/>
+<!-- Este evento se dispara sólo al presionar la tecla enter. -->
+<!-- Creamos una referencia #txtSearch que es la referencia al input, por parámetros
+le pasamos el .value / al utilizar el decorador @ViewChild no hace falta pasarselo por 
+parametros.-->
