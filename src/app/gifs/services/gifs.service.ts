@@ -9,7 +9,7 @@ import { SearchGifsResponse, Gif } from '../interfaces/gifs.interface';
 /* provieIn root hace que este disponible en toda la app */
 export class GifsService {
 
-  private apiKey : string = 'dHtPrN80u1qv0wFTEqyrgtHVZHEVCbWG'
+  //private apiKey : string = 'dHtPrN80u1qv0wFTEqyrgtHVZHEVCbWG'
   private _history: string[] = [];
 
   //TODO cambiar el tipaydo any
@@ -19,7 +19,12 @@ export class GifsService {
     return [...this._history];
   }
 
-  constructor( private http: HttpClient){}
+  constructor( private http: HttpClient){
+   if (localStorage.getItem('historial')) {
+    this._history = JSON.parse(localStorage.getItem('historial')!);
+    this.results = JSON.parse(localStorage.getItem('resultados')!)
+   }
+  }
 
   searchGifs(query: string) {   
     
@@ -27,15 +32,16 @@ export class GifsService {
 
     if( !this._history.includes(query)) {
       this._history.unshift(query); 
+      this._history = this._history.splice(0,10);//primero insertamos y luego lo cortamos si son mas de 10. 
+    
+      localStorage.setItem('historial', JSON.stringify(this._history))
     }
-
-    this._history = this._history.splice(0,10);
-    //primero insertamos y luego lo cortamos si son mas de 10. 
 
     this.http.get<SearchGifsResponse>(`https://api.giphy.com/v1/gifs/search?api_key=dHtPrN80u1qv0wFTEqyrgtHVZHEVCbWG&q=${query}&limit=10`)
     .subscribe( (resp) => {
-      console.log(resp.data)
-      this.results = resp.data           
+      console.log(resp.data);
+      this.results = resp.data;
+      localStorage.setItem('resultados', JSON.stringify(this.results));  
     })
   }
 }
